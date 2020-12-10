@@ -45,13 +45,13 @@
 (require 'solar)
 
 (defcustom twilight-funs '((:sunrise lambda nil 0)
-                           (:sunset) lambda nil 0)
-  "List of themes mapped to the time they should be loaded."
+                           (:sunset lambda nil 0))
+  "List of functions mapped to the time they should be loaded."
   :type 'alist
   :group 'twilight)
 
 (defun twilight-fun-max (funs)
-  ""
+  "Get the function FUNS, which has the largest time."
   (and funs
        (cl-reduce #'(lambda (e rest)
                       (if (< (car e)
@@ -61,7 +61,7 @@
                   funs)))
 
 (defun twilight-fun-min (funs)
-  ""
+  "Get the function FUNS, which has the smallest time."
   (and funs
        (cl-reduce #'(lambda (e rest)
                       (if (> (car e)
@@ -71,7 +71,7 @@
                   funs)))
 
 (defun twilight-funs-parse (now)
-  "Parse `twilight-themes' and sort by time and shift by NOW"
+  "Parse `twilight-funs' and sort by time and shift by NOW."
   (sort
    (mapcar
     (lambda (entry)
@@ -86,7 +86,7 @@
 
 ;;; --- Time
 (defun twilight-now-time ()
-  ""
+  "Return the current daytime in seconds."
   (twilight--convert-hh-mm-ss->s (reverse (cl-subseq (decode-time) 0 3))))
 
 (defun twilight--frac-to-seconds (f)
@@ -95,7 +95,7 @@
                86400)))
 
 (defun twilight--convert-hh-mm-ss->s (time)
-  ""
+  "Convert the TIME, which is a list in format (HH MM SS) to its representation in seconds."
   (+ (nth 2 time)
      (* 60
         (+
@@ -128,7 +128,7 @@
 
 ;;; --- Main
 (defun twilight-time-of-next-activation (funs now)
-  ""
+  "Get the seconds to wait, until the next function from FUNS should be activated. NOW is the current time."
   (+ (or (car (twilight-fun-min (seq-remove (lambda (e)
                                   (< (car e)
                                      0))
@@ -138,7 +138,7 @@
      1))
 
 (defun twilight-get-active-fun (funs)
-  ""
+  "Get active function from FUNS."
   (cdr (or (twilight-fun-max (seq-remove (lambda (e)
                                   (> (car e)
                                      0))
@@ -146,7 +146,7 @@
            (twilight-fun-max funs))))
 
 (defun twilight-run-active-fun ()
-  "Check which themes are overdue to be activated and load the last."
+  "Find the function from FUNS, which should be activated and restart the timer for the next."
   (let* ((now (twilight-now-time))
          (funs (twilight-funs-parse now))
          (fun (twilight-get-active-fun funs))
