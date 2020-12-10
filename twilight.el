@@ -6,7 +6,7 @@
 ;; Maintainer: Valentin Herrmann <herr.valentin.mann@gmail.com>
 ;; Created: December 05, 2020
 ;; Modified: December 05, 2020
-;; Version: 0.0.1
+;; Version: 0.1.0
 ;; Keywords: day, night, time, function
 ;; Homepage: https://github.com/vherrmann/twilight
 ;; Package-Requires: ((emacs 27.1) (cl-lib "0.5"))
